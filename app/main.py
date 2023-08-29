@@ -10,8 +10,9 @@ async def root():
     return {"message": "Hello World"}
 
 
-class RequestModel(BaseModel):
-    url: str = Field(..., description="スクレイピング対象のURL", regex="http.?://.*")
+class RequestTwitterModel(BaseModel):
+    url: str = Field(..., description="スクレイピング対象のTwitterのURL",
+                     regex="http.?://(x|twitter)\.com.*")
 
 
 class ResponseModel(BaseModel):
@@ -19,13 +20,11 @@ class ResponseModel(BaseModel):
     content: str = Field(..., description="スクレイピング結果")
 
 
-@app.post("/")
-async def root(request: RequestModel):
+@app.post("/twitter")
+async def scrape_twitter(request: RequestTwitterModel):
     scraping = Scraping()
-    result = scraping.scrape(request.url)
-    print(result)
-
+    result = scraping.scrape_twitter(request.url)
     return {
         "url": request.url,
-        "content": "Hello World"
+        "content": result
     }

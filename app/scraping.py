@@ -7,6 +7,7 @@ from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
 from selenium.webdriver.support.ui import WebDriverWait
 from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
+from typing import Optional
 
 SELENIUM_URL = os.environ.get("SELENIUM_URL", "http://localhost:4444")
 
@@ -19,16 +20,21 @@ class Scraping:
             raise Exception("Selenium is not ready. url: " +
                             SELENIUM_URL + "/wd/hub/status")
 
-    def scrape(self, url: str):
+    def scrape_twitter(self, url: str) -> Optional[str]:
         """ 試合詳細を取得 """
         driver = self.__get_driver()
         try:
-            driver.implicitly_wait(2)
             driver.get(url)
+            driver.implicitly_wait(5)
             elements = driver.find_elements(
-                By.CLASS_NAME, "Article_Table__item")
-            print(elements)
-            return elements
+                By.TAG_NAME, "meta")
+            for element in elements:
+                attribute = element.get_attribute('outerHTML')
+                property = element.get_attribute('property')
+                if "property" in attribute and "og:description" in property:
+                    content = element.get_attribute('content')
+                    return content
+            return None
         finally:
             driver.quit()
 
@@ -42,6 +48,8 @@ class Scraping:
 
 
 if __name__ == "__main__":
-    # python -m tjpw_schedule.scraping
+    # python -m app.scraping
     scraping = Scraping()
-    scraping.scrape("https://twitter.com/MLBear2/status/1696240260399906862")
+    result = scraping.scrape(
+        "https://twitter.com/MLBear2/status/1696240260399906862")
+    print(f"result: {result}")
