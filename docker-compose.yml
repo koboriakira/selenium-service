@@ -23,8 +23,6 @@ services:
       - 5024:8080
     volumes:
       - .:/var/www/
-    environment:
-      - SELENIUM_URL=http://chrome:4444
     tty: true
     networks:
       - default

@@ -9,7 +9,7 @@ from datetime import datetime, timedelta
 from dateutil.relativedelta import relativedelta
 from typing import Optional
 
-SELENIUM_URL = os.environ.get("SELENIUM_URL", "http://localhost:4444")
+SELENIUM_URL = "http://chrome:4444"
 
 
 class Scraping:
@@ -50,6 +50,6 @@ class Scraping:
 if __name__ == "__main__":
     # python -m app.scraping
     scraping = Scraping()
-    result = scraping.scrape(
+    result = scraping.scrape_twitter(
         "https://twitter.com/MLBear2/status/1696240260399906862")
     print(f"result: {result}")
